@@ -14,6 +14,8 @@ namespace punkte
     {
         List<Point> people = new List<Point>();
         Random rnd = new Random();
+        List<Rectangle> rectLst = new List<Rectangle>();
+        Point ziel;
         
         public Form1()
         {
@@ -24,13 +26,22 @@ namespace punkte
         {
             Graphics g = e.Graphics;
             SolidBrush sb = new SolidBrush(Color.Red);
+            SolidBrush sbZiel = new SolidBrush(Color.Yellow);
             Pen p = new Pen(Color.Yellow, 3);
+
+            g.DrawLine(p, panel1.Width / 3, panel1.Height / 5, panel1.Width / 3 * 2, panel1.Height / 5);
+            g.DrawLine(p, panel1.Width / 3, panel1.Height / 5, panel1.Width / 3, panel1.Height / 5 * 3);
+            g.DrawLine(p, panel1.Width / 3, panel1.Height / 5 * 3, panel1.Width / 3 * 2, panel1.Height / 5 * 3);
+
+            
+            g.FillEllipse(sbZiel, ziel.X, ziel.Y, 5, 5);  
+
+            Rectangle tempRect = new Rectangle(panel1.Width / 3, panel1.Height / 5, (panel1.Width / 3 * 2) - (panel1.Width / 3), (panel1.Height / 5 * 3) - (panel1.Height / 5));
+
+            rectLst.Add(tempRect);
+            
             try
             {
-                g.DrawLine(p, panel1.Width / 3, panel1.Height / 5, panel1.Width / 3 * 2, panel1.Height / 5);
-                g.DrawLine(p, panel1.Width / 3, panel1.Height / 5, panel1.Width / 3, panel1.Height / 5 * 3);
-                g.DrawLine(p, panel1.Width / 3, panel1.Height / 5 * 3, panel1.Width / 3 * 2, panel1.Height / 5 * 3);
-
                 foreach (Point item in people)
                 {
                     g.FillEllipse(sb, item.X, item.Y, 5, 5);        
@@ -45,6 +56,7 @@ namespace punkte
 
         private void button1_Click(object sender, EventArgs e)
         {
+
             Liste();
         }
 
@@ -59,16 +71,26 @@ namespace punkte
             int startH = 0;
 
             if (checkBox1.Checked)
-            { 
-            
-            }
-
-            for (int i = 0; i < anz; i++)
             {
-                people.Add(new Point(rnd.Next(startW, maxW),
-                                     rnd.Next(startH, maxH)));
-            }
+                startW = rectLst[0].X;
+                startH = rectLst[0].Y;
+                maxW = rectLst[0].X + rectLst[0].Width;
+                maxH = rectLst[0].Y + rectLst[0].Height;
 
+                for (int i = 0; i < anz; i++)
+                {
+                    people.Add(new Point(rnd.Next(startW, maxW),
+                                         rnd.Next(startH, maxH)));
+                }
+            }
+            else
+            { 
+                for (int i = 0; i < anz; i++)
+                {
+                    people.Add(new Point(rnd.Next(0, maxW),
+                                         rnd.Next(0, maxH)));
+                }
+            }
             foreach (Point item in people)
             {
                 listBox1.Items.Add(item.X + "/" + item.Y);
@@ -82,6 +104,11 @@ namespace punkte
             {
                 Liste();
             }
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            ziel = new Point(rnd.Next(0, panel1.Width), rnd.Next(0, panel1.Height));
         }
     }
 }
