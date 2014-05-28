@@ -17,9 +17,10 @@ namespace punkte
         Random rnd = new Random();
         Point move = new Point(1, 1);
         List<Rectangle> rectLst = new List<Rectangle>();
+        List<Point> temp;
         Point ziel;
         bool run = false;
-        
+        int schrittweite = 1; // per default für schnellere bewegung
         public Form1()
         {
             InitializeComponent();
@@ -38,7 +39,7 @@ namespace punkte
             g.DrawLine(p, panel1.Width / 3, panel1.Height / 5 * 3, panel1.Width / 3 * 2, panel1.Height / 5 * 3);
             passingPoints.Add(new Point(panel1.Width / 3 * 2, panel1.Height / 5 * 3));
            
-            g.FillEllipse(sbZiel, ziel.X, ziel.Y, 5, 5);  
+            g.FillEllipse(sbZiel, ziel.X, ziel.Y, 5, 5);
 
             Rectangle tempRect = new Rectangle(panel1.Width / 3, panel1.Height / 5, (panel1.Width / 3 * 2) - (panel1.Width / 3), (panel1.Height / 5 * 3) - (panel1.Height / 5));
 
@@ -120,6 +121,8 @@ namespace punkte
             switch (run)
             {
                 case false:
+                    temp = people;
+                    timer1.Interval = 50;
                     timer1.Start();
                     run = true;
                     break;
@@ -132,32 +135,34 @@ namespace punkte
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            List<Point> temp = people;
-            foreach (Point item in temp)
+             
+            for(int i = 0; i < temp.Count; i++)
             {
                 Point tempHold = new Point(0, 0);
-                    if (item.X > ziel.X)
+                    if (temp[i].X > ziel.X)
                     {
-                        int z = people.IndexOf(item);
-                        people[z] = tempHold = new Point(item.X - 1, item.Y);
+                        int z = people.IndexOf(temp[i]);
+                        people[z] = tempHold = new Point(temp[i].X - schrittweite, temp[i].Y);
                     }
-                    if (item.X < ziel.X)
+                    if (temp[i].X < ziel.X)
                     {
-                        int z = people.IndexOf(item);
-                        people[z] = tempHold = new Point(item.X + 1, item.Y);
+                        int z = people.IndexOf(temp[i]);
+                        people[z] = tempHold = new Point(temp[i].X + schrittweite, temp[i].Y);
                     }
-               
-                    if (item.Y > ziel.Y)
+
+                    if (temp[i].Y > ziel.Y)
                     {
-                        int z = people.IndexOf(tempHold);
-                        people[z] = new Point(item.X, item.Y-1);
+                        int z = people.IndexOf(temp[i]);
+                        people[z] = new Point(temp[i].X, temp[i].Y - schrittweite);
                     }
-                    if (item.Y < ziel.Y)
+                    if (temp[i].Y < ziel.Y)
                     {
-                        int z = people.IndexOf(tempHold);
-                        people[z] = new Point(item.X, item.Y+1);
+                        int z = people.IndexOf(temp[i]);
+                        people[z] = new Point(temp[i].X, temp[i].Y + schrittweite);
                     }
             }
+            panel1.Invalidate();
         }
+       
     }
 }
